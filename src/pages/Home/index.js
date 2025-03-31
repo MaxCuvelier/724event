@@ -20,7 +20,8 @@ const Page = () => {
   
   useEffect(() => {
     if (data?.events && data.events.length > 0) {
-      const lastEvent = data.events[data.events.length - 1];
+      const sortedEvents = data.events.sort((a, b) => new Date(b.date) - new Date(a.date));
+    const lastEvent = sortedEvents[0];
       setLast(lastEvent);
     }
   }, [data])
