@@ -7,9 +7,11 @@ import "./style.scss";
 const Slider = () => {
   const { data } = useData();
   const [index, setIndex] = useState(0);
-  const byDateDesc = data?.focus.sort((evtA, evtB) =>
-    new Date(evtA.date) > new Date(evtB.date) ? -1 : 1
-  );
+  const byDateDesc = data?.focus
+    ? data.focus.sort((evtA, evtB) =>
+        new Date(evtA.date) > new Date(evtB.date) ? -1 : 1
+      )
+    : [];
   const nextCard = () => {
     setTimeout(
       () => setIndex(index < byDateDesc.length-1 ? index + 1 : 0),
@@ -18,13 +20,17 @@ const Slider = () => {
   };
   useEffect(() => {
     nextCard();
-  });
+  }, [index, byDateDesc]);
+
+  const handleRadioChange = (radioIdx) => {
+    setIndex(radioIdx);
+  };
+
   return (
     <div className="SlideCardList">
       {byDateDesc?.map((event, idx) => (
-        <>
+        <div key={event.id}>
           <div
-            key={event.id}
             className={`SlideCard SlideCard--${
               index === idx ? "display" : "hide"
             }`}
@@ -42,15 +48,17 @@ const Slider = () => {
             <div className="SlideCard__pagination">
               {byDateDesc.map((_, radioIdx) => (
                 <input
-                  key={`${event.id}`}
+                // eslint-disable-next-line react/no-array-index-key
+                key={`${event.id}-radio-${radioIdx}`}
                   type="radio"
                   name="radio-button"
                   checked={index === radioIdx}
+                  onChange={() => handleRadioChange(radioIdx)}
                 />
               ))}
             </div>
           </div>
-        </>
+        </div>
       ))}
     </div>
   );
